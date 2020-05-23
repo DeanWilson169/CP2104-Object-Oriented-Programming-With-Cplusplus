@@ -329,46 +329,42 @@ void Dictionary::rhymingWords(){
 void Dictionary::scrabbleWords(string word)
 {   
     int score = 0;
-    score += determineLetterScore(word, "aeilnorstu", 1);
-    score += determineLetterScore(word, "dg", 2);
-    score += determineLetterScore(word, "bcmp", 3);
-    score += determineLetterScore(word, "fhwvy", 4);
-    score += determineLetterScore(word, "k", 5);
-    score += determineLetterScore(word, "jx", 8);
-    score += determineLetterScore(word, "qz", 10);
+    score += determineLetterScore(word);
     cout << score << endl;
 }
 
-int Dictionary::determineLetterScore(string word, string letters, int scoreModifier)
+int Dictionary::determineLetterScore(string word)
 {
-    // determine values for each letter
     int score = 0;
-    int letterAccurance = 0;
-    for(size_t i = 0; i < letters.length(); i++)
+
+    for(int i = 0; i < word.length(); i++)
     {
-        // Currently only finding one instance of each letter, find a way of calculating how many times each letter appears and add that value to the score modifier
-        int wordLengthCounter = 0;
-        size_t position = 0;
-        size_t letterPosition;
-        string subStrWord;
-        while(wordLengthCounter < word.length())
-        {
-            // for some reason this is currently returning an out of range error
-            try{
-                subStrWord = (word.find(letters[i]) != string::npos) ? word.substr(letters[i], position) : "";
-            }
-            catch(exception){
-                subStrWord = "";
-            }
-            
-            letterAccurance += (subStrWord.find(letters[i]) != string::npos) ? 1 : 0;
-            position += 1;
-            wordLengthCounter++;
-        }
-        score += (subStrWord.find(letters[i]) != string::npos) ? scoreModifier + letterAccurance : 0;
+        string character ("");
+        character.push_back(word[i]);
+
+        score += checkLetters(character, "aeilnorstu", 1);
+        score += checkLetters(character, "dg", 2);
+        score += checkLetters(character, "bcmp", 3);
+        score += checkLetters(character, "fhwvy", 4);
+        score += checkLetters(character, "k", 5);
+        score += checkLetters(character, "jx", 8);
+        score += checkLetters(character, "qz", 10);
     }
+
     return score;
 }
+
+int Dictionary::checkLetters(string currentLetter, string characters, int scoreMultiplier){
+
+    std::size_t found = currentLetter.find_first_of(characters);
+    if(found != string::npos)
+    {
+        return scoreMultiplier;
+    }
+    return 0;
+}
+
+
 
 #pragma endregion DICTIONARY_CLASS_IMPLEMENTATION
 

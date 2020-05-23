@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cstddef>
 
 using namespace std;
 
@@ -78,14 +79,9 @@ class Dictionary {
     void rhymingWords();    
     void scrabbleWords(string word);
     vector<string> convertWordToVector(string word);
-    int determineLetterScore(string word, string letters, int scoreModifier);
-    int twoScoreLetters(string word);
-    int threeScoreLetters(string word);
-    int fourScoreLetters(string word);
-    int fiveScoreLetters(string word);
-    int eightScoreLetters(string word);
-    int tenScoreLetters(string word);
-
+    int determineLetterScore(string word);
+    int checkLetters(string currentLetter, string characters, int scoreMultiplier);
+    void rhymingWords(string word);
 };
 
 class Menu{
