@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <cstddef>
+#include <algorithm>
 
 using namespace std;
 
@@ -64,8 +65,18 @@ class Dictionary {
     vector<string> dictionaryContent;
     vector<Word> wordContainer;
     string dictionaryFile = "dictionary2020.txt";
+    // Private Variable Declarations for Assignment 2
+    vector<string> scrambledWords;
+
+
     // Private Method Declarations
     bool canReadFile(ifstream& file);
+    //Assignment 2
+    int determineLetterScore(string word);
+    int checkLetters(string currentLetter, string characters, int scoreMultiplier);
+    void permute(string word, int left, int right);
+    vector<string> fixVector(vector<string> scrambledWords);
+
 
     public:
     // Public Method Declarations
@@ -79,9 +90,9 @@ class Dictionary {
     void rhymingWords();    
     void scrabbleWords(string word);
     vector<string> convertWordToVector(string word);
-    int determineLetterScore(string word);
-    int checkLetters(string currentLetter, string characters, int scoreMultiplier);
-    void rhymingWords(string word);
+    void getAnagrams();
+    vector<string> jumbleWord(string word);
+    string removeSpaces(string str);
 };
 
 class Menu{
@@ -103,6 +114,7 @@ class Menu{
     void displayMainMenu();
     //Assignment 2
     void rhymingWordsSelected(string& input);
+    void getAnamgramsSelected(string& input);
 
     public:
     // Public Method Declarations

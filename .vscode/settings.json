@@ -7,6 +7,16 @@
         "type_traits": "cpp",
         "vector": "cpp",
         "xutility": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "iosfwd": "cpp",
+        "algorithm": "cpp",
+        "ios": "cpp",
+        "xiosbase": "cpp",
+        "exception": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "memory": "cpp",
+        "streambuf": "cpp",
+        "tuple": "cpp"
     }
 }

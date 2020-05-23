@@ -364,6 +364,88 @@ int Dictionary::checkLetters(string currentLetter, string characters, int scoreM
     return 0;
 }
 
+void Dictionary::getAnagrams(){
+    string input;
+    cout << "Enter a word to find anagrams" << endl;
+    cin >> input;
+    permute(input, 0, input.length());
+    scrambledWords = fixVector(scrambledWords);
+    int wordContainerSize = wordContainer.size();
+    int scrambledWordSize = scrambledWords.size();
+    //Loop through the Dictionary to find other words that also end in that substring
+    for(int i = 0; i < scrambledWordSize; i++){ 
+        for(int j = 0; i < wordContainerSize; j++){
+                if(scrambledWords[i] == wordContainer[j].getWord())
+                {
+                    cout << "scrambled: " << scrambledWords[i] << " Word: "<< wordContainer[j].getWord() << endl;
+                }
+        }
+    }
+}
+
+
+////////// REFACTOR THIS METHOD //////////////
+vector<string> Dictionary::fixVector(vector<string> scrambledWords)
+{
+    vector<string> noSpacesBruh;
+
+    for (int i = 0; i < scrambledWords.size(); i++){
+        string letters = "";
+        for (int j = 0; j < scrambledWords[i].length(); j++){
+            string currentLetter = "";
+            currentLetter.push_back(scrambledWords[i][j]);
+            if(currentLetter.find_first_of("abcdefghijklmnopqrstuvwxyz") != string::npos)
+            {
+                letters.push_back(scrambledWords[i][j]);
+            }
+        }
+        noSpacesBruh.push_back(letters);
+    }
+    return noSpacesBruh;
+}
+
+void Dictionary::permute(string word, int left, int right){
+
+    string a = word;
+
+    if(left == right){
+        scrambledWords.push_back(a);
+        scrambledWords.size();
+    }
+    else{
+        for(int i = left; i <= right; i++)
+        {
+
+            //swap a character in the word with another
+            swap(a[left], a[i]);
+            //Recursively call function
+            permute(a, left+1, right);
+
+            //Swap the word back to not mutate it
+            swap(a[left], a[i]);
+        }
+    }
+
+}
+
+string Dictionary::removeSpaces(string str){
+    str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
+    return str;
+
+    // string noSpaces = str;
+    // for(int i = 0; i < noSpaces.length(); i++){
+        
+    //     string character = "";
+    //     character.push_back(noSpaces[i]);
+    //     size_t space = character.find_first_of(' ');
+    //     if(space != string::npos){
+    //         cout << space << endl;
+    //         noSpaces.erase(space);
+    //     }
+        
+    // }
+}
+
 
 
 #pragma endregion DICTIONARY_CLASS_IMPLEMENTATION
@@ -385,6 +467,8 @@ void Menu::displayMainMenu(){
     << "[3] Find words containing the 'logy' substring that are less than 7 characters in length" 
     << endl
     << "[4] Find words that rhyme" 
+    << endl
+    << "[5] Find words that are anagrams" 
     << endl
     << "[0] Exit" 
     << endl;
@@ -415,6 +499,7 @@ void Menu::determineMainMenuSelection()
         findLargestWordSelected(input);
         logyWordsSelected(input);
         rhymingWordsSelected(input);
+        getAnamgramsSelected(input);
         readDictionary = exitMainMenu(input);
         invalidSelection();
     }
@@ -449,6 +534,14 @@ void Menu::rhymingWordsSelected(string& input){
     if(input == "4")
     {
         dictionary.rhymingWords();
+        isValidSelection = true;
+    }
+}
+// Check to see if the user selected Anagrams
+void Menu::getAnamgramsSelected(string& input){
+    if(input == "5")
+    {
+        dictionary.getAnagrams();
         isValidSelection = true;
     }
 }
