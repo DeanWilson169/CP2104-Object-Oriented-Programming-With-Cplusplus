@@ -372,15 +372,41 @@ void Dictionary::getAnagrams(){
     scrambledWords = fixVector(scrambledWords);
     int wordContainerSize = wordContainer.size();
     int scrambledWordSize = scrambledWords.size();
+    filterUsedWords();
+
     //Loop through the Dictionary to find other words that also end in that substring
-    for(int i = 0; i < scrambledWordSize; i++){ 
-        for(int j = 0; i < wordContainerSize; j++){
-                if(scrambledWords[i] == wordContainer[j].getWord())
-                {
-                    cout << "scrambled: " << scrambledWords[i] << " Word: "<< wordContainer[j].getWord() << endl;
-                }
+    for(int j = 0; j < wordContainerSize; j++){
+        for(int i = 0; i < scrambledWordSize; i++){
+            if(scrambledWords[i] == wordContainer[j].getWord()){
+                cout << wordContainer[j].getWord() << endl;
+                break;
+            }
+
         }
     }
+}
+
+void Dictionary::filterUsedWords(){
+    vector<string> usedWords;
+    
+    int scrambledWordSize = scrambledWords.size();
+    
+    for(int i = 0; i < scrambledWordSize; i++){
+        bool found = false;
+        int usedWordSize = usedWords.size();
+        for(int j = 0; j < usedWordSize; j++){
+
+            if(scrambledWords[i] == usedWords[j])
+            {
+                found = true;
+            }
+            continue;
+        }
+        if(found == false || usedWords.size() == 0){
+            usedWords.push_back(scrambledWords[i]);
+        }
+    }
+    scrambledWords = usedWords;
 }
 
 

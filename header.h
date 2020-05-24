@@ -76,7 +76,7 @@ class Dictionary {
     int checkLetters(string currentLetter, string characters, int scoreMultiplier);
     void permute(string word, int left, int right);
     vector<string> fixVector(vector<string> scrambledWords);
-
+    void filterUsedWords();
 
     public:
     // Public Method Declarations
