@@ -368,9 +368,10 @@ void Dictionary::highestScrabbleScoreFromLetters(){
     string input;
     cout << "Enter a string of letters to find the highest scoring word" << endl;
     cin >> input;
-    permute(input, 0, input.length());
-    vector<string> scrambledLetters = fixVector(scrambledLetters);
-    filterUsedWords();
+    vector<string> scrambledLetters;
+    scrambledLetters = permute(input, 0, input.length());
+    scrambledLetters = fixVector(scrambledLetters);
+    scrambledLetters = filterUsedWords(scrambledLetters);
     int wordContainerSize = wordContainer.size();
     int scrambledLettersSize = scrambledLetters.size();
     int highestScore = 0;
@@ -389,54 +390,92 @@ void Dictionary::highestScrabbleScoreFromLetters(){
 
         }
     }
-    cout << highScoreWord << endl;
-    cout << "Scrabble Score: " << highestScore << endl;
+    if(highScoreWord.length() > 0)
+    {
+        cout << highScoreWord << endl;
+        cout << "Scrabble Score: " << highestScore << endl;
+    }
+    else{
+        cout << "Could not find any words with those letters" << endl;
+    }
+}
+
+vector<string> Dictionary::scrambleWords(string word, vector<string> scrambleWordsContainer){
     
+    //Give the container the word and shuffle the different permutations into the vector
+    scrambleWordsContainer = permute(word, 0, word.length());
+    
+    //Remove the whitespaces from the each word in the vector
+    scrambleWordsContainer = fixVector(scrambleWordsContainer);
+    
+    //Remove any duplicates that may reside within the vector after stripping the whitespace
+    // Because "  d " and "d   " were two seperate values prior to stripping the whitespace
+    scrambleWordsContainer = filterUsedWords(scrambleWordsContainer);
+
+    return scrambleWordsContainer;
 }
 
 void Dictionary::getAnagrams(){
-    string input;
+    string word;
     cout << "Enter a word to find anagrams" << endl;
-    cin >> input;
-    permute(input, 0, input.length());
-    scrambledWords = fixVector(scrambledWords);
+    cin >> word;
+    vector<string> scrambleWordsContainer;
+    scrambleWordsContainer = scrambleWords(word, scrambleWordsContainer);
     int wordContainerSize = wordContainer.size();
-    int scrambledWordSize = scrambledWords.size();
-    filterUsedWords();
+    int scrambledWordSize = scrambleWordsContainer.size();
 
+    int lastFoundWord;
     //Loop through the Dictionary to find other words that also end in that substring
     for(int j = 0; j < wordContainerSize; j++){
-        for(int i = 0; i < scrambledWordSize; i++){
-            if(scrambledWords[i] == wordContainer[j].getWord()){
-                cout << wordContainer[j].getWord() << endl;
-                break;
+        if(wordContainer[j].getWord().find_first_of(word) != string::npos)
+        {
+            scrambledWordSize = scrambleWordsContainer.size();
+            for(int i = 0; i < scrambledWordSize; i++){
+                if(scrambleWordsContainer[i] == wordContainer[j].getWord()){
+                    cout << wordContainer[j].getWord() << endl;
+                    //Make the container shorter so it doesn't take so long to search through it over and over again
+                    scrambleWordsContainer.erase(scrambleWordsContainer.begin(), scrambleWordsContainer.begin() + i);
+                    //cout << scrambledWordSize << endl;
+                    break;
+                }
             }
-
         }
     }
 }
 
-void Dictionary::filterUsedWords(){
+vector<string> Dictionary::filterUsedWords(vector<string> scrambledWords){
     vector<string> usedWords;
     
+    unordered_set<string> s;
     int scrambledWordSize = scrambledWords.size();
     
-    for(int i = 0; i < scrambledWordSize; i++){
-        bool found = false;
-        int usedWordSize = usedWords.size();
-        for(int j = 0; j < usedWordSize; j++){
-
-            if(scrambledWords[i] == usedWords[j])
-            {
-                found = true;
-            }
-            continue;
-        }
-        if(found == false || usedWords.size() == 0){
-            usedWords.push_back(scrambledWords[i]);
-        }
+    for(int i = 0; i < scrambledWordSize; ++i) 
+    {
+        s.insert(scrambledWords[i]);
     }
-    scrambledWords = usedWords;
+    scrambledWords.assign(s.begin() , s.end());
+    sort(scrambledWords.begin(), scrambledWords.end());
+
+    // for(int i = 0; i < scrambledWordSize; ++i) 
+    // {
+    //     cout << scrambledWords[i] << endl;
+    // }
+
+    // for(int i = 0; i < scrambledWordSize; i++){
+    //     bool found = false;
+    //     unsigned usedWordSize = usedWords.size();
+    //     for(int j = 0; j < usedWordSize; j++){
+    //         if(scrambledWords[i] == usedWords[j])
+    //         {
+    //             found = true;
+    //         }
+    //     }
+    //     if(found == false || usedWords.size() == 0){
+            
+    //         usedWords.push_back(scrambledWords[i]);
+    //     }
+    // }
+    return scrambledWords;
 }
 
 
@@ -444,13 +483,14 @@ void Dictionary::filterUsedWords(){
 vector<string> Dictionary::fixVector(vector<string> scrambledWords)
 {
     vector<string> noSpacesBruh;
+    string const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
     for (int i = 0; i < scrambledWords.size(); i++){
         string letters = "";
         for (int j = 0; j < scrambledWords[i].length(); j++){
             string currentLetter = "";
             currentLetter.push_back(scrambledWords[i][j]);
-            if(currentLetter.find_first_of("abcdefghijklmnopqrstuvwxyz") != string::npos)
+            if(currentLetter.find_first_of(ALPHABET) != string::npos)
             {
                 letters.push_back(scrambledWords[i][j]);
             }
@@ -460,13 +500,15 @@ vector<string> Dictionary::fixVector(vector<string> scrambledWords)
     return noSpacesBruh;
 }
 
-void Dictionary::permute(string word, int left, int right){
+vector<string> Dictionary::permute(string word, int left, int right){
 
     string a = word;
 
+    vector<string> wordPermuations;
+    
     if(left == right){
-        scrambledWords.push_back(a);
-        scrambledWords.size();
+        wordPermuations.push_back(a);
+        return wordPermuations;
     }
     else{
         for(int i = left; i <= right; i++)
@@ -474,32 +516,19 @@ void Dictionary::permute(string word, int left, int right){
 
             //swap a character in the word with another
             swap(a[left], a[i]);
+
+
             //Recursively call function
-            permute(a, left+1, right);
+            vector<string> b = permute(a, left+1, right);
+
+            //Append the new vector to the old one
+            wordPermuations.insert(end(wordPermuations), begin(b), end(b)); 
 
             //Swap the word back to not mutate it
             swap(a[left], a[i]);
         }
     }
-
-}
-
-string Dictionary::removeSpaces(string str){
-    str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
-    return str;
-
-    // string noSpaces = str;
-    // for(int i = 0; i < noSpaces.length(); i++){
-        
-    //     string character = "";
-    //     character.push_back(noSpaces[i]);
-    //     size_t space = character.find_first_of(' ');
-    //     if(space != string::npos){
-    //         cout << space << endl;
-    //         noSpaces.erase(space);
-    //     }
-        
-    // }
+    return wordPermuations;
 }
 
 

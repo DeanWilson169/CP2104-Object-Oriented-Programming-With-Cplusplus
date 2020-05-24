@@ -8,7 +8,7 @@
 #include <string>
 #include <cstddef>
 #include <algorithm>
-
+#include <unordered_set>
 using namespace std;
 
 class Word {
@@ -66,7 +66,7 @@ class Dictionary {
     vector<Word> wordContainer;
     string dictionaryFile = "dictionary2020.txt";
     // Private Variable Declarations for Assignment 2
-    vector<string> scrambledWords;
+    //vector<string> scrambledWords;
 
 
     // Private Method Declarations
@@ -74,9 +74,10 @@ class Dictionary {
     //Assignment 2
     int determineLetterScore(string word);
     int checkLetters(string currentLetter, string characters, int scoreMultiplier);
-    void permute(string word, int left, int right);
+    vector<string> permute(string word, int left, int right);
     vector<string> fixVector(vector<string> scrambledWords);
-    void filterUsedWords();
+    vector<string> filterUsedWords(vector<string> scrambledWords);
+    vector<string> scrambleWords(string word, vector<string> scrambleWordsContainer);
 
     public:
     // Public Method Declarations
@@ -93,7 +94,6 @@ class Dictionary {
     void getAnagrams();
     void highestScrabbleScoreFromLetters();
     vector<string> jumbleWord(string word);
-    string removeSpaces(string str);
 };
 
 class Menu{
