@@ -364,6 +364,36 @@ int Dictionary::checkLetters(string currentLetter, string characters, int scoreM
     return 0;
 }
 
+void Dictionary::highestScrabbleScoreFromLetters(){
+    string input;
+    cout << "Enter a string of letters to find the highest scoring word" << endl;
+    cin >> input;
+    permute(input, 0, input.length());
+    vector<string> scrambledLetters = fixVector(scrambledLetters);
+    filterUsedWords();
+    int wordContainerSize = wordContainer.size();
+    int scrambledLettersSize = scrambledLetters.size();
+    int highestScore = 0;
+    int currentScore = 0;
+    string highScoreWord = "";
+    for(int j = 0; j < wordContainerSize; j++){
+        for(int i = 0; i < scrambledLettersSize; i++){
+            if(scrambledLetters[i] == wordContainer[j].getWord()){
+                currentScore = determineLetterScore(wordContainer[j].getWord());
+                if(currentScore >= highestScore){
+                    highestScore = currentScore;
+                    highScoreWord = wordContainer[j].getWord();
+                }
+                break;
+            }
+
+        }
+    }
+    cout << highScoreWord << endl;
+    cout << "Scrabble Score: " << highestScore << endl;
+    
+}
+
 void Dictionary::getAnagrams(){
     string input;
     cout << "Enter a word to find anagrams" << endl;
@@ -496,6 +526,8 @@ void Menu::displayMainMenu(){
     << endl
     << "[5] Find words that are anagrams" 
     << endl
+    << "[6] Find the highest Scrabble score from a string of letters" 
+    << endl
     << "[0] Exit" 
     << endl;
 }
@@ -526,6 +558,7 @@ void Menu::determineMainMenuSelection()
         logyWordsSelected(input);
         rhymingWordsSelected(input);
         getAnamgramsSelected(input);
+        highestScoreFromLettersSelected(input);
         readDictionary = exitMainMenu(input);
         invalidSelection();
     }
@@ -568,6 +601,15 @@ void Menu::getAnamgramsSelected(string& input){
     if(input == "5")
     {
         dictionary.getAnagrams();
+        isValidSelection = true;
+    }
+}
+
+// Check to see if the user selected Highest Score from Letters
+void Menu::highestScoreFromLettersSelected(string& input){
+    if(input == "6")
+    {
+        dictionary.highestScrabbleScoreFromLetters();
         isValidSelection = true;
     }
 }

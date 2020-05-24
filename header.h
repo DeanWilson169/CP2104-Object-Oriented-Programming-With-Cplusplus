@@ -91,6 +91,7 @@ class Dictionary {
     void scrabbleWords(string word);
     vector<string> convertWordToVector(string word);
     void getAnagrams();
+    void highestScrabbleScoreFromLetters();
     vector<string> jumbleWord(string word);
     string removeSpaces(string str);
 };
@@ -115,6 +116,7 @@ class Menu{
     //Assignment 2
     void rhymingWordsSelected(string& input);
     void getAnamgramsSelected(string& input);
+    void highestScoreFromLettersSelected(string& input);
 
     public:
     // Public Method Declarations
