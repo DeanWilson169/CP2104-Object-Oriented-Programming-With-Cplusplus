@@ -93,6 +93,8 @@ void Word::printDefinition(){
     {
         cout << i + 1 << ". " << splitDefinitionsContainer[i] << endl;
     }
+
+    scrabbleWords();
 }
 
 
@@ -162,6 +164,52 @@ void Word::typeError(string& output){
 }
 // Check to see if the word is a noun
 #pragma endregion ESTABLISH_TYPE
+
+// Scrabble Words
+
+void Word::scrabbleWords()
+{   
+    int score = 0;
+    if(getType() != "misc" || getType() == "pn"){
+        score += determineLetterScore();
+    }
+    cout << "Scrabble Score: " << score << endl;
+}
+
+int Word::determineLetterScore()
+{
+    int score = 0;
+
+    for(int i = 0; i < getWord().length(); i++)
+    {
+        string character ("");
+        character.push_back(getWord()[i]);
+
+        score += checkLetters(character, "aeilnorstu", 1);
+        score += checkLetters(character, "dg", 2);
+        score += checkLetters(character, "bcmp", 3);
+        score += checkLetters(character, "fhwvy", 4);
+        score += checkLetters(character, "k", 5);
+        score += checkLetters(character, "jx", 8);
+        score += checkLetters(character, "qz", 10);
+    }
+
+    return score;
+}
+
+int Word::checkLetters(string currentLetter, string characters, int scoreMultiplier){
+
+    std::size_t found = currentLetter.find_first_of(characters);
+    if(found != string::npos)
+    {
+        return scoreMultiplier;
+    }
+    return 0;
+}
+
+
+
+
 
 #pragma endregion WORD_CLASS_IMPLEMENTATION
 
@@ -241,7 +289,6 @@ void Dictionary::searchDefinition(){
         if(input == wordContainer[i].getWord())
         {
             wordContainer[i].printDefinition();
-            scrabbleWords(wordContainer[i].getWord());
             break;
         }
         else if(i == LAST_WORD && input != wordContainer[i].getWord())
@@ -327,51 +374,14 @@ void Dictionary::rhymingWords(){
     }
 }
 
-// Scrabble Words
 
-void Dictionary::scrabbleWords(string word)
-{   
-    int score = 0;
-    score += determineLetterScore(word);
-    cout << score << endl;
-}
-
-int Dictionary::determineLetterScore(string word)
-{
-    int score = 0;
-
-    for(int i = 0; i < word.length(); i++)
-    {
-        string character ("");
-        character.push_back(word[i]);
-
-        score += checkLetters(character, "aeilnorstu", 1);
-        score += checkLetters(character, "dg", 2);
-        score += checkLetters(character, "bcmp", 3);
-        score += checkLetters(character, "fhwvy", 4);
-        score += checkLetters(character, "k", 5);
-        score += checkLetters(character, "jx", 8);
-        score += checkLetters(character, "qz", 10);
-    }
-
-    return score;
-}
-
-int Dictionary::checkLetters(string currentLetter, string characters, int scoreMultiplier){
-
-    std::size_t found = currentLetter.find_first_of(characters);
-    if(found != string::npos)
-    {
-        return scoreMultiplier;
-    }
-    return 0;
-}
-
+// Apologies for this function being so slow to respond, i didn't give myself enough time to find a way to make it work better
 void Dictionary::highestScrabbleScoreFromLetters(){
     // Ask user for input
     string letters;
     cout << "Enter a string of letters to find the highest scoring word" << endl;
     cin >> letters;
+    cout << "Working out highest score..." << endl;
     // Create a vector for the different permutations of the users input
     vector<string> scrambledLettersContainer;
     scrambledLettersContainer = scrambleWords(letters, scrambledLettersContainer);
@@ -379,24 +389,41 @@ void Dictionary::highestScrabbleScoreFromLetters(){
     // Create variables to keep track of the highest scoring word
     int highestScore = 0;
     int currentScore = 0;
+    int highScoreCounter = 1;
     string highScoreWord = "";
+    
     //Loop through the dictionary
     int wordContainerSize = wordContainer.size();
     for(int j = 0; j < wordContainerSize; j++){
         //loop through the permutations
         scrambledLettersSize = scrambledLettersContainer.size();
-        for(int i = 0; i < scrambledLettersSize; i++){
-            //Check to see if a the permutation matches a word in the dictionary
-            if(scrambledLettersContainer[i] == wordContainer[j].getWord()){
-                currentScore = determineLetterScore(wordContainer[j].getWord());
-                if(currentScore >= highestScore){
-                    highestScore = currentScore;
-                    highScoreWord = wordContainer[j].getWord();
-                }
-                scrambledLettersContainer.erase(scrambledLettersContainer.begin(), scrambledLettersContainer.begin() + i);
-                break;
+        int matchingLetters = 0;
+        for(int k = 0; k < letters.length(); k++)
+        {
+            if(wordContainer[j].getWord().find_first_of(letters.at(k)) != string::npos){
+                matchingLetters++;
             }
+        }
 
+        if(wordContainer[j].getWord().length() <= letters.length() && matchingLetters >= letters.length())
+        {
+            for(int i = 0; i < scrambledLettersSize; i++){
+                //cout << "Current Word " << wordContainer[j].getWord() << "  Current Scramble " << scrambledLettersContainer[i] <<  endl;
+
+                //Check to see if a the permutation matches a word in the dictionary
+                if(scrambledLettersContainer[i] == wordContainer[j].getWord()){
+                    currentScore = wordContainer[j].determineLetterScore();
+                
+                    if(currentScore >= highestScore){
+                        //cout << "Found a higher score " << highScoreCounter++ << " times" << endl;
+                        highestScore = currentScore;
+                        highScoreWord = wordContainer[j].getWord();
+                    }
+                    scrambledLettersContainer.erase(scrambledLettersContainer.begin(), scrambledLettersContainer.begin() + i);
+                    break;
+                }
+
+            }
         }
     }
     if(highScoreWord.length() > 0)
@@ -477,33 +504,13 @@ vector<string> Dictionary::filterUsedWords(vector<string> scrambledWords){
     scrambledWords.assign(s.begin() , s.end());
     sort(scrambledWords.begin(), scrambledWords.end());
 
-    // for(int i = 0; i < scrambledWordSize; ++i) 
-    // {
-    //     cout << scrambledWords[i] << endl;
-    // }
-
-    // for(int i = 0; i < scrambledWordSize; i++){
-    //     bool found = false;
-    //     unsigned usedWordSize = usedWords.size();
-    //     for(int j = 0; j < usedWordSize; j++){
-    //         if(scrambledWords[i] == usedWords[j])
-    //         {
-    //             found = true;
-    //         }
-    //     }
-    //     if(found == false || usedWords.size() == 0){
-            
-    //         usedWords.push_back(scrambledWords[i]);
-    //     }
-    // }
     return scrambledWords;
 }
 
 
-////////// REFACTOR THIS METHOD //////////////
 vector<string> Dictionary::fixVector(vector<string> scrambledWords)
 {
-    vector<string> noSpacesBruh;
+    vector<string> fixedWordList;
     string const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
     for (int i = 0; i < scrambledWords.size(); i++){
@@ -516,9 +523,9 @@ vector<string> Dictionary::fixVector(vector<string> scrambledWords)
                 letters.push_back(scrambledWords[i][j]);
             }
         }
-        noSpacesBruh.push_back(letters);
+        fixedWordList.push_back(letters);
     }
-    return noSpacesBruh;
+    return fixedWordList;
 }
 
 vector<string> Dictionary::permute(string word, int left, int right){
@@ -707,7 +714,10 @@ void WriteToHTML::writeAlphabetToFile(){
     for(int i = 0; i < ALPHABET.length(); i++)
     {
         string dictionaryEntry = createHTMLPages(ALPHABET[i]);
-        file.open(FOLDER_PREFIX + ALPHABET[i] + ".html");
+        string fileName = ".html";
+        fileName.insert(fileName.begin(), ALPHABET[i]);
+        cout << "Creating " << fileName << endl;
+        file.open(FOLDER_PREFIX + fileName);
         file << dictionaryEntry;
         file.close();
     }
@@ -716,9 +726,7 @@ void WriteToHTML::writeAlphabetToFile(){
 string WriteToHTML::createHTMLPages(char letter){
 
     string dictionaryPage;
-    int wordContainerSize = dictionary.wordContainer.size();
-    cout << wordContainerSize << endl;
-    
+    int wordContainerSize = dictionary.wordContainer.size();    
     
     for(int i = 0; i < wordContainerSize; i++){
         string currentWord = dictionary.wordContainer[i].getWord();
@@ -752,6 +760,7 @@ void WriteToHTML::setupIndexPage(){
     ofstream file;
     file.open(FOLDER_PREFIX + "index.html");
     string page;
+
     for(int i = 0; i < ALPHABET.length(); i++)
     {
         string letterString = "";
@@ -762,6 +771,7 @@ void WriteToHTML::setupIndexPage(){
     file << page;
     file.close();
 }
+
 
 string WriteToHTML::writeIndexPage(string letter){
     return "    <div class=\"alphaLink\">Words starting with <a href=\"" + letter + ".html\">" + letter + "</a></div>\n";
@@ -775,6 +785,7 @@ string WriteToHTML::addHTMLHeaderAndFooterToPage(string page){
 string WriteToHTML::setupHTMLHeader(){
     return std::string("<html>\n  ") + "<head>\n    " +
     "<h1>Dictionary</h1>\n      " +
+    "<div>Dean Wilson<br>\n10479931<br>\nCSP2104 Object Oriented Programming in C++<br>\n Assignment 2<br>\n      " +
     "<link rel=\"stylesheet\" href=\"../css/styles.css\">\n      " +
     "<div>\n        " +
     "<a href=\"index.html\"> Back to Home Page</a>\n      " +

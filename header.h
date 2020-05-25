@@ -39,6 +39,9 @@ class Word {
     void isProperNoun(string& output);
     void isNounAndVerb(string& output);
     void typeError(string& output);
+    void scrabbleWords();
+    
+    int checkLetters(string currentLetter, string characters, int scoreMultiplier);
 
     public:
     // Public Method Declarations
@@ -49,7 +52,7 @@ class Word {
     Word();
     void printDefinition();
     string getDefinitionsAsListedString();
-
+    int determineLetterScore();
 };
 
 class Dictionary {
@@ -74,8 +77,7 @@ class Dictionary {
     bool canReadFile(ifstream& file);
     
     //Assignment 2
-    int determineLetterScore(string word);
-    int checkLetters(string currentLetter, string characters, int scoreMultiplier);
+
     vector<string> permute(string word, int left, int right);
     vector<string> fixVector(vector<string> scrambledWords);
     vector<string> filterUsedWords(vector<string> scrambledWords);
@@ -93,7 +95,6 @@ class Dictionary {
     void logyWords();
     //Assignment 2
     void rhymingWords();    
-    void scrabbleWords(string word);
     vector<string> convertWordToVector(string word);
     void getAnagrams();
     void highestScrabbleScoreFromLetters();
@@ -144,7 +145,6 @@ class Menu{
     void getAnamgramsSelected(string& input);
     void highestScoreFromLettersSelected(string& input);
     void writeToHTMLSelected(string& input);
-
     public:
     // Public Method Declarations
     void selectMainMenuOption();
