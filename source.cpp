@@ -172,7 +172,9 @@ void Word::typeError(string& output){
 */
 
 // Dictionary Default Class Contructor
-Dictionary::Dictionary(){};
+Dictionary::Dictionary(){
+    loadDictionary();
+};
 
 bool Dictionary::canReadFile(ifstream& file)
 {
@@ -694,25 +696,53 @@ void Menu::invalidSelection(){
 
 void WriteToHTML::writeAlphabetToFile(){
 
+
     ofstream file;
     string const FOLDER_PREFIX("html-files/");
     
-    vector<Word> wordContainer = dictionary.wordContainer;
-    int wordContainerSize = wordContainer.size();
-
     string const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-    bool fileCreated = false;
 
-    for(int i = 0; i < wordContainerSize; i++){
-        string currentWord = wordContainer[i].getWord();
-        char firstLetter = currentWord.at(0);
-        for(int j = 0; j < ALPHABET.length(); j++)
-        {
-            if(fileCreated == false && firstLetter == ALPHABET[j])
-                file.open(FOLDER_PREFIX + ALPHABET[j] + ".html");
-        }
+    for(int i = 0; i < ALPHABET.length(); i++)
+    {
+        string dictionaryEntry = createHTMLPages(ALPHABET[i]);
+        file.open(FOLDER_PREFIX + ALPHABET[i] + ".html");
+        file << dictionaryEntry;
+        file.close();
     }
 }
+
+string WriteToHTML::createHTMLPages(char letter){
+
+    string dictionaryPage;
+    int wordContainerSize = dictionary.wordContainer.size();
+    cout << wordContainerSize << endl;
+    
+    
+    for(int i = 0; i < wordContainerSize; i++){
+        string currentWord = dictionary.wordContainer[i].getWord();
+        char firstLetter = currentWord.at(0);
+        if(firstLetter == letter)
+        {
+            dictionaryPage += writeWord(dictionary.wordContainer[i]);
+        }
+        if(firstLetter > letter){
+            break;
+        }
+    }
+
+    return dictionaryPage;
+}
+
+string WriteToHTML::writeWord(Word word){
+
+    return "<p>" + word.getWord() + "<br>" + "\n"
+    + word.getDefinition() + "<br>" + "\n"
+    + word.getType() + "<br>" + "\n"
+    + "\n" + "</p>";
+
+}
+
+
 
 
 #pragma endregion WRITETOHTML_CLASS_IMPLEMENTATION

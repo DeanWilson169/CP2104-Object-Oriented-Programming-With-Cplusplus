@@ -83,7 +83,6 @@ class Dictionary {
     public:
      // Public Variable Declarations
     vector<Word> wordContainer;
-
     // Public Method Declarations
     Dictionary();
     void readFromFile();
@@ -110,7 +109,8 @@ Dictionary dictionary;
 public:
 
 void writeAlphabetToFile();
-
+string writeWord(Word word);
+string createHTMLPages(char letter);
 
 
 
