@@ -63,7 +63,7 @@ class Dictionary {
     // Private Variable Declarations
     Word word;
     vector<string> dictionaryContent;
-    vector<Word> wordContainer;
+    
     string dictionaryFile = "dictionary2020.txt";
     // Private Variable Declarations for Assignment 2
     //vector<string> scrambledWords;
@@ -71,6 +71,7 @@ class Dictionary {
 
     // Private Method Declarations
     bool canReadFile(ifstream& file);
+    
     //Assignment 2
     int determineLetterScore(string word);
     int checkLetters(string currentLetter, string characters, int scoreMultiplier);
@@ -80,6 +81,9 @@ class Dictionary {
     vector<string> scrambleWords(string word, vector<string> scrambleWordsContainer);
 
     public:
+     // Public Variable Declarations
+    vector<Word> wordContainer;
+
     // Public Method Declarations
     Dictionary();
     void readFromFile();
@@ -96,6 +100,22 @@ class Dictionary {
     vector<string> jumbleWord(string word);
 };
 
+
+class WriteToHTML{
+
+private:
+ofstream index;
+Dictionary dictionary;
+
+public:
+
+void writeAlphabetToFile();
+
+
+
+
+};
+
 class Menu{
 
     //
@@ -105,6 +125,7 @@ class Menu{
     private:
     // Private Method Declarations
     Dictionary dictionary;
+    WriteToHTML writeToHTML;
     bool isValidSelection;
     void searchDefinitionSelected(string& input);
     void findLargestWordSelected(string& input);
@@ -117,8 +138,10 @@ class Menu{
     void rhymingWordsSelected(string& input);
     void getAnamgramsSelected(string& input);
     void highestScoreFromLettersSelected(string& input);
+    void writeToHTMLSelected(string& input);
 
     public:
     // Public Method Declarations
     void selectMainMenuOption();
 };
+

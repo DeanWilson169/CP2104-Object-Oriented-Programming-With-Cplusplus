@@ -575,6 +575,8 @@ void Menu::displayMainMenu(){
     << endl
     << "[6] Find the highest Scrabble score from a string of letters" 
     << endl
+    << "[7] Create HTML Files" 
+    << endl
     << "[0] Exit" 
     << endl;
 }
@@ -606,6 +608,7 @@ void Menu::determineMainMenuSelection()
         rhymingWordsSelected(input);
         getAnamgramsSelected(input);
         highestScoreFromLettersSelected(input);
+        writeToHTMLSelected(input);
         readDictionary = exitMainMenu(input);
         invalidSelection();
     }
@@ -660,6 +663,14 @@ void Menu::highestScoreFromLettersSelected(string& input){
         isValidSelection = true;
     }
 }
+// Check to see if the user selected Highest Score from Letters
+void Menu::writeToHTMLSelected(string& input){
+    if(input == "7")
+    {
+        writeToHTML.writeAlphabetToFile();
+        isValidSelection = true;
+    }
+}
 // Check to see if the user selected Exit
 bool Menu::exitMainMenu(string& input){
     if(input == "0")
@@ -677,3 +688,31 @@ void Menu::invalidSelection(){
 }
 
 #pragma endregion MENU_CLASS_IMPLEMENTATION
+
+
+#pragma region WRITETOHTML_CLASS_IMPLEMENTATION
+
+void WriteToHTML::writeAlphabetToFile(){
+
+    ofstream file;
+    string const FOLDER_PREFIX("html-files/");
+    
+    vector<Word> wordContainer = dictionary.wordContainer;
+    int wordContainerSize = wordContainer.size();
+
+    string const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+    bool fileCreated = false;
+
+    for(int i = 0; i < wordContainerSize; i++){
+        string currentWord = wordContainer[i].getWord();
+        char firstLetter = currentWord.at(0);
+        for(int j = 0; j < ALPHABET.length(); j++)
+        {
+            if(fileCreated == false && firstLetter == ALPHABET[j])
+                file.open(FOLDER_PREFIX + ALPHABET[j] + ".html");
+        }
+    }
+}
+
+
+#pragma endregion WRITETOHTML_CLASS_IMPLEMENTATION
