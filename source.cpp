@@ -365,26 +365,32 @@ int Dictionary::checkLetters(string currentLetter, string characters, int scoreM
 }
 
 void Dictionary::highestScrabbleScoreFromLetters(){
-    string input;
+    // Ask user for input
+    string letters;
     cout << "Enter a string of letters to find the highest scoring word" << endl;
-    cin >> input;
-    vector<string> scrambledLetters;
-    scrambledLetters = permute(input, 0, input.length());
-    scrambledLetters = fixVector(scrambledLetters);
-    scrambledLetters = filterUsedWords(scrambledLetters);
-    int wordContainerSize = wordContainer.size();
-    int scrambledLettersSize = scrambledLetters.size();
+    cin >> letters;
+    // Create a vector for the different permutations of the users input
+    vector<string> scrambledLettersContainer;
+    scrambledLettersContainer = scrambleWords(letters, scrambledLettersContainer);
+    int scrambledLettersSize = scrambledLettersContainer.size();
+    // Create variables to keep track of the highest scoring word
     int highestScore = 0;
     int currentScore = 0;
     string highScoreWord = "";
+    //Loop through the dictionary
+    int wordContainerSize = wordContainer.size();
     for(int j = 0; j < wordContainerSize; j++){
+        //loop through the permutations
+        scrambledLettersSize = scrambledLettersContainer.size();
         for(int i = 0; i < scrambledLettersSize; i++){
-            if(scrambledLetters[i] == wordContainer[j].getWord()){
+            //Check to see if a the permutation matches a word in the dictionary
+            if(scrambledLettersContainer[i] == wordContainer[j].getWord()){
                 currentScore = determineLetterScore(wordContainer[j].getWord());
                 if(currentScore >= highestScore){
                     highestScore = currentScore;
                     highScoreWord = wordContainer[j].getWord();
                 }
+                scrambledLettersContainer.erase(scrambledLettersContainer.begin(), scrambledLettersContainer.begin() + i);
                 break;
             }
 
@@ -392,7 +398,7 @@ void Dictionary::highestScrabbleScoreFromLetters(){
     }
     if(highScoreWord.length() > 0)
     {
-        cout << highScoreWord << endl;
+        cout << "Word: " << highScoreWord << endl;
         cout << "Scrabble Score: " << highestScore << endl;
     }
     else{
@@ -425,21 +431,33 @@ void Dictionary::getAnagrams(){
     int scrambledWordSize = scrambleWordsContainer.size();
 
     int lastFoundWord;
-    //Loop through the Dictionary to find other words that also end in that substring
-    for(int j = 0; j < wordContainerSize; j++){
-        if(wordContainer[j].getWord().find_first_of(word) != string::npos)
-        {
-            scrambledWordSize = scrambleWordsContainer.size();
-            for(int i = 0; i < scrambledWordSize; i++){
-                if(scrambleWordsContainer[i] == wordContainer[j].getWord()){
-                    cout << wordContainer[j].getWord() << endl;
-                    //Make the container shorter so it doesn't take so long to search through it over and over again
-                    scrambleWordsContainer.erase(scrambleWordsContainer.begin(), scrambleWordsContainer.begin() + i);
-                    //cout << scrambledWordSize << endl;
-                    break;
+
+    int dictionarySize = 0;
+
+
+    while(dictionarySize < wordContainerSize)
+    {
+        //Loop through the Dictionary to find other words that also end in that substring
+        for(int j = dictionarySize; j < wordContainerSize; j++){
+            
+            if(wordContainer[j].getWord().find_first_of(word) != string::npos)
+            {
+                
+                scrambledWordSize = scrambleWordsContainer.size();
+                for(int i = 0; i < scrambledWordSize; i++){
+                    if(scrambleWordsContainer[i] == wordContainer[j].getWord()){
+                        cout << wordContainer[j].getWord() << endl;
+                        dictionarySize = j;
+                        //Make the container shorter so it doesn't take so long to search through it over and over again
+                        scrambleWordsContainer.erase(scrambleWordsContainer.begin(), scrambleWordsContainer.begin() + i);
+                        //cout << scrambledWordSize << endl;
+                        break;
+                    }
                 }
             }
+            break;
         }
+        dictionarySize += 1;
     }
 }
 
