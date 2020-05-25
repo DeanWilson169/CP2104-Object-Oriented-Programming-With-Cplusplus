@@ -48,6 +48,7 @@ class Word {
     Word(string, string, string);
     Word();
     void printDefinition();
+    string getDefinitionsAsListedString();
 
 };
 
@@ -105,15 +106,19 @@ class WriteToHTML{
 private:
 ofstream index;
 Dictionary dictionary;
-
+string const FOLDER_PREFIX = "html-files/";
+string const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 public:
 
+WriteToHTML();
 void writeAlphabetToFile();
 string writeWord(Word word);
 string createHTMLPages(char letter);
-
-
-
+void setupIndexPage();
+string writeIndexPage(string letter);
+string addHTMLHeaderAndFooterToPage(string page);
+string setupHTMLHeader();
+string setupHTMLFooter();
 };
 
 class Menu{

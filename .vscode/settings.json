@@ -43,6 +43,7 @@
         "xtr1common": "cpp",
         "list": "cpp",
         "xhash": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "unordered_set": "cpp"
     }
 }

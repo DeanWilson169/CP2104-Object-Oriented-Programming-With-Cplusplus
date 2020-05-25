@@ -95,6 +95,7 @@ void Word::printDefinition(){
     }
 }
 
+
 #pragma region ESTABLISH_TYPE
 
 // get the type code of each word and convert it to its full length name
@@ -694,13 +695,14 @@ void Menu::invalidSelection(){
 
 #pragma region WRITETOHTML_CLASS_IMPLEMENTATION
 
+WriteToHTML::WriteToHTML(){
+    setupIndexPage();
+}
+
 void WriteToHTML::writeAlphabetToFile(){
 
 
-    ofstream file;
-    string const FOLDER_PREFIX("html-files/");
-    
-    string const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+    ofstream file;    
 
     for(int i = 0; i < ALPHABET.length(); i++)
     {
@@ -730,19 +732,61 @@ string WriteToHTML::createHTMLPages(char letter){
         }
     }
 
+    dictionaryPage = addHTMLHeaderAndFooterToPage(dictionaryPage);
     return dictionaryPage;
 }
 
 string WriteToHTML::writeWord(Word word){
 
-    return "<p>" + word.getWord() + "<br>" + "\n"
-    + word.getDefinition() + "<br>" + "\n"
-    + word.getType() + "<br>" + "\n"
-    + "\n" + "</p>";
+    return std::string("    <div>\n      ") + 
+    word.getWord() + 
+    "<br>\n      " +
+    word.getDefinition() + 
+    "<br>\n      " + 
+    word.getType() + 
+    "\n    </div><br>\n        \n";
 
 }
 
+void WriteToHTML::setupIndexPage(){
+    ofstream file;
+    file.open(FOLDER_PREFIX + "index.html");
+    string page;
+    for(int i = 0; i < ALPHABET.length(); i++)
+    {
+        string letterString = "";
+        letterString.push_back(ALPHABET[i]);
+        page += writeIndexPage(letterString);
+    }
+    page = addHTMLHeaderAndFooterToPage(page);
+    file << page;
+    file.close();
+}
 
+string WriteToHTML::writeIndexPage(string letter){
+    return "    <div class=\"alphaLink\">Words starting with <a href=\"" + letter + ".html\">" + letter + "</a></div>\n";
+}
+
+
+string WriteToHTML::addHTMLHeaderAndFooterToPage(string page){
+    return setupHTMLHeader() + page + setupHTMLFooter();
+}
+
+string WriteToHTML::setupHTMLHeader(){
+    return std::string("<html>\n  ") + "<head>\n    " +
+    "<h1>Dictionary</h1>\n      " +
+    "<link rel=\"stylesheet\" href=\"../css/styles.css\">\n      " +
+    "<div>\n        " +
+    "<a href=\"index.html\"> Back to Home Page</a>\n      " +
+    "</div>\n  " +
+    "</head>\n  " +
+    "<body>\n";
+}
+
+string WriteToHTML::setupHTMLFooter(){
+    return std::string("  </body>\n") + 
+    "</html>";
+}
 
 
 #pragma endregion WRITETOHTML_CLASS_IMPLEMENTATION
